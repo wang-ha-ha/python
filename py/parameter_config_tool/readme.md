@@ -1,0 +1,2 @@
+1、使用Cryptomk模块进行AES加密，Windows需要安装pip install pycryptodome
+2、图像界面使用Tikinter
