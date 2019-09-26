@@ -1,4 +1,5 @@
 #忽略文件列表
+*ignore*
 /ignore
 /test
 
