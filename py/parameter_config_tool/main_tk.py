@@ -3,6 +3,7 @@ import crypt
 import json
 from tkinter import  *
 from tkinter import ttk
+from tkinter import messagebox
 
 def relative_path_to_abs(path):
 	current_path = os.path.dirname(__file__)
@@ -60,13 +61,14 @@ class application(Frame):
         ttk.Label(top_frame, text = "tag",width=3).grid(row=0, column=4,padx=8, pady=4)       
         ttk.Entry(top_frame,show=None,width=8, font=('Arial', 10),textvariable = self.dat_tag).grid(row=0, column=5)
         
-    def butn_test(self):
-        
+    def radbutn_test(self):
+        pass
+        '''
         print_all(self.dat_op.get())
         print_all(self.dat_cmd.get())
         print(self.dat_tag.get())
         print(self.radvar.get())
-        
+        '''
     def create_data_widget(self,parent,index,name,unit):        
     
         ttk.Label(parent, text = name,width=15).grid(row = index, column=0,padx=20)
@@ -77,7 +79,7 @@ class application(Frame):
         
         ttk.Label(parent, text = unit,width=10).grid(row = index, column=2,padx=8)
 
-        Radiobutton(parent,variable=self.radvar, value=index , command = self.butn_test).grid(row = index, column=3,padx=8)
+        Radiobutton(parent,variable=self.radvar, value=index , command = self.radbutn_test).grid(row = index, column=3,padx=8)
         
     def create_mid_frame_first(self,p):
         mid_frame = ttk.LabelFrame(p,text = "information") 
@@ -119,50 +121,63 @@ class application(Frame):
         self.create_data_widget(mid_frame,13,"控料模式","(0,1)")
         #----------------------------        
     
-    def dat_generate(self):
-        datarr = [0]*self.datlen
-        
-        for i in self.datarr:      
-            #print(self.datarr[i].get(),end = " ")
-            datarr[i] = self.datarr[i].get()        
-        print()
+    def dat_configuration(self):
         
         json_dict = {"op":self.dat_op.get(),"cmd":self.dat_cmd.get(),"tag":self.dat_tag.get()}
-        json_dict["par"] = datarr
+        
+        
+        if json_dict["op"] == "set":
+            if json_dict["cmd"] == "all":
+                datarr = [0]*self.datlen 
+                
+                for i in self.datarr:      
+                    datarr[i] = self.datarr[i].get()  
+                    print(i)
+                    
+                json_dict["par"] = datarr
+            elif json_dict["cmd"] == "single":
+                
+                try:
+                    index = self.radvar.get()
+                    dat = self.datarr[index].get()                            
+                    json_dict["par"] = dat
+                except KeyError:
+                    messagebox.showwarning("错误","请选择一个要配置的参数")
+                    
+        elif json_dict["op"] == "dump":  
+            if json_dict["cmd"] == "all":
+                pass
+            elif json_dict["cmd"] == "single":
+                pass
+            elif json_dict["cmd"] == "tag":
+                pass      
         
         json_file = open(relative_path_to_abs('dat.json'),'w')
         json.dump(json_dict,json_file,indent=4)
         json_file.close()
         
+        json_str = json.dumps(json_dict)
+        print(json_str)
+        
+        return json_str
+    
+    def dat_generate(self):
+   
+        json_str = self.dat_configuration()
         
         if self.key.get() == "":
             key = "1234567891234567"
         else:
             key = self.key.get()
 
-        json_str = json.dumps(json_dict)
-        print(json_str)
+        
         aes = crypt.aes_cipher(key)
-        
-        print("<---------->")
-        
+
         encrypt_str = aes.encrypts(json_str)
-        print(encrypt_str)
-        decrypt_str = aes.decrypts(encrypt_str)
-        print(decrypt_str)
-        print("<---------->")
-        
 
         with open(relative_path_to_abs("dat.json.aes"),"wb") as f:
             dat = f.write(encrypt_str)        
 
-        with open(relative_path_to_abs("dat.json.aes"),"rb") as f:
-            dat = f.read()
-        print(dat)
-        decrypt_str = aes.decrypts(dat)
-        print(decrypt_str)
-
-        print("<---------->")
         
     def create_bot_frame_first(self,p):
     
