@@ -11,7 +11,8 @@ def print_all(dat,str=""):
     pass
     #print("%s-->type:%s len:%s content:%s"%(str,type(dat),len(dat),dat))
    
-
+#连续解密同一个加密数据有问题，要去查看CBC加密过程
+#CBC上次解密的数据会对下次有影响
     
 class aes_cipher(object):
  
