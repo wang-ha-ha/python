@@ -36,8 +36,11 @@ class application(Frame):
         self.create_bot_frame_first(tab1)
          
         tab2 = ttk.Frame(tabControl)            
-        tabControl.add(tab2, text='解密数据')      
-         
+        tabControl.add(tab2, text='解密数据')
+        
+        self.text = Text(tab2).pack(side = "top",padx=10,pady=10)
+        ttk.Button(tab2, text='打开解密文件', command=self.dat_decrypts).pack(side = "top",padx=10) 
+        
         tabControl.pack(expand=1, fill="both",padx=5, pady=5) 
     def create_top_frame_first(self,p):
         top_frame = ttk.LabelFrame(p,text = "operation")       
@@ -119,6 +122,13 @@ class application(Frame):
         self.create_data_widget(mid_frame,13,"控料模式","(0,1)")
         #----------------------------        
     
+    def dat_decrypts(self):
+        
+        with open(relative_path_to_abs("dat.json.aes"),"rb") as f:
+            dat = f.read()
+        
+        self.text.write(dat)
+        
     def dat_generate(self):
         datarr = [0]*self.datlen
         
@@ -147,22 +157,44 @@ class application(Frame):
         print("<---------->")
         
         encrypt_str = aes.encrypts(json_str)
-        print(encrypt_str)
-        decrypt_str = aes.decrypts(encrypt_str)
-        print(decrypt_str)
-        print("<---------->")
+        print_all(encrypt_str)
         
-
         with open(relative_path_to_abs("dat.json.aes"),"wb") as f:
-            dat = f.write(encrypt_str)        
-
+            dat = f.write(encrypt_str) 
+        
         with open(relative_path_to_abs("dat.json.aes"),"rb") as f:
             dat = f.read()
-        print(dat)
+        #print_all(dat)
         decrypt_str = aes.decrypts(dat)
         print(decrypt_str)
-
+        
+        decrypt_str = aes.decrypts(dat)
+        print(decrypt_str)
+        
+        decrypt_str = aes.decrypts(dat)
+        print(decrypt_str)
+        
         print("<---------->")
+
+        '''       
+        #连续解密同一个加密数据有问题，要去查看CBC加密过程
+        #CBC上次解密的数据会对下次有影响
+        decrypt_str = aes.decrypts(encrypt_str)
+        print(decrypt_str)
+        
+        encrypt_str = aes.encrypts(json_str)
+        print_all(encrypt_str)
+        
+        decrypt_str1 = aes.decrypts(encrypt_str)
+        print(decrypt_str1)
+        
+        decrypt_str2 = aes.decrypts(encrypt_str)
+        print(decrypt_str2)
+        
+        decrypt_str3 = aes.decrypts(encrypt_str)
+        print(decrypt_str3)
+        print("<---------->")    
+        '''          
         
     def create_bot_frame_first(self,p):
     

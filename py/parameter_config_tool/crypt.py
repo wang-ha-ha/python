@@ -21,8 +21,7 @@ class aes_cipher(object):
         # key是16个字节，也就是128位 16*8
         # key可以是16*8=128, 24*8=192, 32*8=256位
         self.key = self.iv = self.add_to_16(key)
-        self.encipher = AES.new(self.key, mode, self.iv)
-        self.decipher = AES.new(self.key, mode, self.iv)
+        self.mode = mode
         
     def add_to_16(self,text):
         # 如果text不足16位的倍数就用空格补足为16位
@@ -36,24 +35,30 @@ class aes_cipher(object):
         
     def encrypts(self, data):
         data = self.pkcs7padding(data)
-        data = bytes(data.encode("utf-8"))        
-        encrypted = self.encipher.encrypt(data)     
+        data = bytes(data.encode("utf-8"))
+
+        encipher = AES.new(self.key, self.mode, self.iv)
+        encrypted = encipher.encrypt(data)     
         return encrypted
     
     def encrypt(self, data , file):
         data = self.pkcs7padding(data)
-        data = bytes(data.encode("utf-8"))        
-        encrypted = self.encipher.encrypt(data)     
+        data = bytes(data.encode("utf-8"))
+        
+        encipher = AES.new(self.key, self.mode, self.iv)
+        encrypted = encipher.encrypt(data)   
         file.write(encrypted)
  
     def decrypts(self, data):        
-        decrypted = self.decipher.decrypt(data)
+        decipher = AES.new(self.key, self.mode, self.iv)
+        decrypted = decipher.decrypt(data)
         decrypted = self.pkcs7unpadding(decrypted)        
         return decrypted
         
     def decrypt(self, file):        
         data = file.read()        
-        decrypted = self.decipher.decrypt(data)
+        decipher = AES.new(self.key, self.mode, self.iv)
+        decrypted = decipher.decrypt(data)
         decrypted = self.pkcs7unpadding(decrypted)        
         return decrypted
  
