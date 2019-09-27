@@ -4,6 +4,7 @@ import json
 from tkinter import  *
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import filedialog
 
 def relative_path_to_abs(path):
 	current_path = os.path.dirname(__file__)
@@ -39,10 +40,24 @@ class application(Frame):
         tab2 = ttk.Frame(tabControl)            
         tabControl.add(tab2, text='解密数据')
         
-        self.text = Text(tab2).pack(side = "top",padx=10,pady=10)
-        ttk.Button(tab2, text='打开解密文件', command=self.dat_decrypts).pack(side = "top",padx=10) 
+        self.create_frame_second(tab2) 
         
         tabControl.pack(expand=1, fill="both",padx=5, pady=5) 
+        
+    def create_frame_second(self,p):
+    
+        self.text_decode = Text(p,width=50,font=('Times', 14))
+        self.text_decode.pack(side = "top",padx=10, pady=10)
+        
+        fram = ttk.LabelFrame(p,text = "operation") 
+        fram.pack(expand = False,fill="x",side = "top",padx=8, pady=4)
+        
+        self.key_second = StringVar()
+        ttk.Label(fram, text = "key").pack(side = "left",padx=8, pady=4)
+        ttk.Entry(fram,show=None, font=('Arial', 10),textvariable = self.key_second).pack(side = "left",padx=8, pady=4)
+   
+        ttk.Button(fram, text='打开解密文件', command=self.dat_decrypts).pack(side = "right",padx=8, pady=4)
+        
     def create_top_frame_first(self,p):
         top_frame = ttk.LabelFrame(p,text = "operation")       
         top_frame.pack(expand = False,fill="x",side = "top",padx=8, pady=4)
@@ -123,13 +138,45 @@ class application(Frame):
         #----------------------------
         self.create_data_widget(mid_frame,13,"控料模式","(0,1)")
         #----------------------------        
+        
+    def create_bot_frame_first(self,p):
     
+        bot_frame = ttk.LabelFrame(p,text = "sys") 
+        bot_frame.pack(expand = True,fill="x",side = "top",padx=8, pady=4)
+        
+        quitButton = ttk.Button(bot_frame, style="R.TButton",text='Quit', command=self.quit)
+        quitButton["state"] = "enable"
+        quitButton.pack(side = "right") 
+
+        quitButton = ttk.Button(bot_frame, style="R.TButton",text='生成', command=self.dat_generate)
+        quitButton["state"] = "enable"
+        quitButton.pack(side = "right",padx=10) 
+        
+        self.key_first = StringVar()
+        ttk.Label(bot_frame, text = "key").pack(side = "left",padx=8)
+        ttk.Entry(bot_frame,show=None, font=('Arial', 10),textvariable = self.key_first).pack(side = "left",padx=10)
+        
     def dat_decrypts(self):
+
+        file = filedialog.askopenfilename(title='打开文件',filetypes=[("加密文件", "*.aes"),("全部文件","*.*")],initialdir=relative_path_to_abs(""))
+
+        with open(file,"rb") as f:
+            if self.key_second.get() == "":
+                key = "1234567891234567"
+            else:
+                key = self.key.get()
+            
+            aes = crypt.aes_cipher(key)
+            dat = aes.decrypt(f)                
+            print(len(dat))
+            
+        json_dat = json.loads(dat)
+        json_str = json.dumps(json_dat,indent=4)
         
-        with open(relative_path_to_abs("dat.json.aes"),"rb") as f:
-            dat = f.read()
+        self.text_decode.delete(1.0,END)
+        self.text_decode.insert(END,json_str)        
         
-        self.text.write(dat)        
+        
     def dat_configuration(self):
         
         json_dict = {"op":self.dat_op.get(),"cmd":self.dat_cmd.get(),"tag":self.dat_tag.get()}
@@ -174,7 +221,7 @@ class application(Frame):
    
         json_str = self.dat_configuration()
         
-        if self.key.get() == "":
+        if self.key_first.get() == "":
             key = "1234567891234567"
         else:
             key = self.key.get()
@@ -183,27 +230,11 @@ class application(Frame):
         aes = crypt.aes_cipher(key)
 
         encrypt_str = aes.encrypts(json_str)
-
+        
+        #file = filedialog.asksaveasfilename(title='保存文件',filetypes=[("加密文件", "*.aes")],initialdir=relative_path_to_abs(""))
+        
         with open(relative_path_to_abs("dat.json.aes"),"wb") as f:
-            dat = f.write(encrypt_str)        
-
-        
-    def create_bot_frame_first(self,p):
-    
-        bot_frame = ttk.LabelFrame(p,text = "sys") 
-        bot_frame.pack(expand = True,fill="x",side = "top",padx=8, pady=4)
-        
-        quitButton = ttk.Button(bot_frame, style="R.TButton",text='Quit', command=self.quit)
-        quitButton["state"] = "enable"
-        quitButton.pack(side = "right") 
-        
-        quitButton = ttk.Button(bot_frame, style="R.TButton",text='生成', command=self.dat_generate)
-        quitButton["state"] = "enable"
-        quitButton.pack(side = "right",padx=10) 
-        
-        self.key = StringVar()
-        ttk.Label(bot_frame, text = "key").pack(side = "left",padx=8)
-        ttk.Entry(bot_frame,show=None, font=('Arial', 10),textvariable = self.key).pack(side = "left",padx=10)
+            dat = f.write(encrypt_str)                
         
 
 app = application(title = "Tool")
