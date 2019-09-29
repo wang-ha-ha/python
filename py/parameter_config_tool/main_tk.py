@@ -67,12 +67,12 @@ class application(Frame):
         ttk.Label(top_frame, text = "op",width=3).grid(row=0, column=0,padx=8, pady=4)       
         temp = ttk.Combobox(top_frame,show=None,width=8, font=('Arial', 10),values = ("set","dump"),state='readonly',textvariable = self.dat_op)
         temp.grid(row=0, column=1)
-        temp.current(0) 
+        #temp.current(0) 
         
         ttk.Label(top_frame, text = "cmd",width=4).grid(row=0, column=2,padx=8, pady=4) 
-        temp = ttk.Combobox(top_frame,show=None,width=8, font=('Arial', 10),values = ("all","single","tag"),state='readonly',textvariable = self.dat_cmd)
+        temp = ttk.Combobox(top_frame,show=None,width=8, font=('Arial', 10),values = ("all","add","single","tag"),state='readonly',textvariable = self.dat_cmd)
         temp.grid(row=0, column=3)
-        temp.current(0) 
+        #temp.current(0) 
         
         ttk.Label(top_frame, text = "tag",width=3).grid(row=0, column=4,padx=8, pady=4)       
         ttk.Entry(top_frame,show=None,width=8, font=('Arial', 10),textvariable = self.dat_tag).grid(row=0, column=5)
@@ -215,6 +215,16 @@ class application(Frame):
                     self.dat_dict["par"][i] = datarr[i]
                     
                 json_dict["par"] = datarr
+            elif json_dict["cmd"] == "add":
+                
+                datarr = [0]*2
+                
+                datarr[0] = self.datarr[0].get() 
+                datarr[1] = self.datarr[1].get() 
+                
+                self.dat_dict["par"][0] = datarr[0]
+                self.dat_dict["par"][1] = datarr[1]
+                json_dict["par"] = datarr
             elif json_dict["cmd"] == "single":
                 
                 try:
@@ -237,9 +247,8 @@ class application(Frame):
         with open(relative_path_to_abs("dat.config"),"w") as f:
             json.dump(self.dat_dict,f,indent=4)
         
-        json_file = open(relative_path_to_abs('dat.json'),'w')
-        json.dump(json_dict,json_file,indent=4) 
-        json_file.close()
+        with open(relative_path_to_abs("dat.json"),"w") as f:
+            json.dump(json_dict,f,indent=4)        
         
         json_str = json.dumps(json_dict)
         print(json_str)

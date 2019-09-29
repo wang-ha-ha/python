@@ -4,4 +4,4 @@
 /ignore
 /test
 dat.*
-
+/__pycache__
