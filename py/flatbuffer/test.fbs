@@ -1,0 +1,12 @@
+namespace school;
+
+table School {
+    name:string;
+    students:[Student];
+}
+
+table Student {
+    number:short;
+    name:string;
+}
+root_type School;
