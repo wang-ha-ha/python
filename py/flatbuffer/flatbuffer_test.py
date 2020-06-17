@@ -27,7 +27,6 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("flatbuffer")
 
 def on_message(client, userdata, msg):
-    print(msg.topic+" " + ":" + str(msg.payload))
     if(msg.topic == "online" or msg.topic == "flatbuffer"):
         en_payload = locakerbox.Msg.Payload.Payload.GetRootAsPayload(msg.payload,0)
         print("flatbuffer payload type:%s "%(en_payload.PayloadType()))
@@ -68,6 +67,8 @@ def on_message(client, userdata, msg):
             
             print("Softver:%s"%(data.Softver()))
             print("Url:%s"%(data.Url()))
+    else:
+        print(msg.topic+" " + ":" + str(msg.payload))
 
 
 def on_log(client, userdata, level, buf):
