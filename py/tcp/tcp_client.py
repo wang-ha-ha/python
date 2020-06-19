@@ -1,14 +1,22 @@
 from socket import *
+import ssl
 
-def main():
-    HOST = '192.168.199.145'
-    PORT = 6666
-    BUFSIZE = 1024
-    ADDRESS = (HOST, PORT)
+http_service_addr = ('127.0.0.1', 8000)
+tcp_service_addr = ('127.0.0.1', 6666)
+certificate_file = './certificate.pem'
 
-    tcpClientSocket = socket(AF_INET, SOCK_STREAM)
-    tcpClientSocket.connect(ADDRESS)
+def main(addr,flag):
 
+    BUFSIZE = 8192
+    
+    s = socket(AF_INET, SOCK_STREAM)
+
+    if flag == True:
+        tcpClientSocket = ssl.wrap_socket(s,cert_reqs=ssl.CERT_REQUIRED,ca_certs = certificate_file)
+    else:
+        tcpClientSocket = s
+
+    tcpClientSocket.connect(addr)
     while True:
         data = input('>')
         if not data:
@@ -19,7 +27,8 @@ def main():
         # 发送数据
         tcpClientSocket.send(data.encode('utf-8'))
         # 接收数据
-        data, ADDR = tcpClientSocket.recvfrom(BUFSIZE)
+        #data, ADDR = tcpClientSocket.recvfrom(BUFSIZE)
+        data  = tcpClientSocket.recv(BUFSIZE)
         if not data:
             break
         print("服务器端响应：", data.decode('utf-8'))
@@ -28,4 +37,6 @@ def main():
     tcpClientSocket.close()
 
 if __name__ == "__main__":
-    main()
+    main(http_service_addr,True)
+    #main(http_service_addr,False)
+    #main(tcp_service_addr,False)
