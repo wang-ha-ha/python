@@ -37,6 +37,8 @@ def main():
                     else:
                         print('客户端 {} 已断开！'.format(client_address))
                         break
+            except :
+                print('客户端 {} 长时间没有响应！'.format(client_address))
             finally:
                 # 关闭为这个客户端服务的socket
                 client_socket.close()
