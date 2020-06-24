@@ -3,12 +3,9 @@
 #python version 3.7
 from socket import *
 from http.server import HTTPServer, BaseHTTPRequestHandler,SimpleHTTPRequestHandler
+import threading
 import ssl
 
-
-
-# Settings localhost
-listen_target = ('localhost', 8000)
 certificate_file = './certificate.pem'
 private_key_file = './private.key'
 
@@ -33,12 +30,36 @@ BaseHTTPRequestHandler.rfile    #self.connection.makefile('wb', self.rbufsize) s
 class TodoHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        print(self.path)
-        self.send_response(200)
-        self.send_header('Content-type','text/html')
-        self.end_headers()  #发送\r\n,意味这下一行为报体
-        #send html message,
-        self.wfile.write('hello'.encode())
+        if self.path == '/':
+            self.send_response(200)
+            self.send_header('Content-type','text/html')
+            self.send_header('Content-Length',len('hello'))
+            self.end_headers()  #发送\r\n,意味这下一行为报体
+            #send html message,
+            self.wfile.write('hello'.encode())
+        elif self.path == "/cert":
+            try:
+                with open("./certificate.pem","rb") as f:
+                    flen = f.seek(0,2)
+                    f.seek(0,0)
+                    self.send_response(200)
+                    self.send_header('Content-type','text/html')
+                    self.send_header('Content-Length',flen)
+                    self.end_headers()  #发送\r\n,意味这下一行为报体
+                    #send html message,
+                    self.wfile.write(f.read())
+            except Exception as e:
+                print('{}: {}'.format(e.__class__.__name__, e))
+                self.send_error(404, "not found.")
+        elif self.path == "/thread" :
+                self.send_response(200)
+                self.send_header('Content-type','text/html')
+                
+                data = "active_count {}".format(threading.active_count()).encode()
+                self.send_header('Content-Length',len(data))
+                self.end_headers()
+                
+                self.wfile.write(data)
 
     def do_POST(self):
         self.send_error(415, "Only GET is supported.")
@@ -52,7 +73,7 @@ def https_service(address):
     httpd.serve_forever()
 
 def Simple_web_service(address):
-    print('Start web_service')
+    print('Start web_service, listen at: {}'.format(address))
     
     httpd = HTTPServer(address, SimpleHTTPRequestHandler)
 
@@ -81,7 +102,7 @@ def echo_client(socket_fd,addr):
 
 
 def echo_server(address):
-    print('Start echo_server')
+    print('Start echo_server, listen at: {}'.format(address))
     s = socket(AF_INET, SOCK_STREAM)
     s.bind(address)
     s.listen(1)
@@ -103,7 +124,20 @@ def echo_server(address):
     finally:
         s_ssl.close()
 
+
+https_addr = ('', 8000)
+http_addr = ('', 9000)
+echo_addr = ('', 8888)
+
 if __name__ == "__main__":
-    https_service(listen_target)
-    #Simple_web_service(listen_target)
-    #echo_server(listen_target)
+    #Simple_web_service(http_addr)
+
+    t1 = threading.Thread(target=https_service,kwargs={"address":https_addr})
+    t2 = threading.Thread(target=Simple_web_service,kwargs={"address":http_addr})
+    t3 = threading.Thread(target=echo_server,kwargs={"address":echo_addr})
+    t1.start()
+    t2.start()
+    t3.start()
+    t1.join()
+    t2.join()
+    t3.join()
