@@ -30,7 +30,11 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.on_publish = on_publish
 client.on_log = on_log
+<<<<<<< HEAD
 client.connect(server_ip, 1883, 60) # 600为keepalive的时间间隔
+=======
+client.connect('192.168.199.145', 1883, 60) # 600为keepalive的时间间隔
+>>>>>>> c09057a93c70beca4bf4505b6740b6136d4bc04d
 client.loop_start()
 
 while(True):
