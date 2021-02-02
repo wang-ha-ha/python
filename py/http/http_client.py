@@ -37,7 +37,7 @@ elif i == 2:
         print('{}: {}'.format(e.__class__.__name__, e))
     
 elif i == 3:
-    r = requests.get("http://localhost:8080/certificate.pem")
+    r = requests.get("http://192.168.2.73:8000/pwn_env_install.sh")
     
     print("----------------------------------")
     print(r.status_code)
@@ -47,7 +47,7 @@ elif i == 3:
     print(r.text)
 
     try:
-        with open("cert.test.pem","wb") as f:
+        with open("csvtest.csv","wb") as f:
             f.write(r.text.encode())
     except Exception as e:
         print('{}: {}'.format(e.__class__.__name__, e))
