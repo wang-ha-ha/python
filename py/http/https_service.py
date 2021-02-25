@@ -60,15 +60,34 @@ class TodoHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 
                 self.wfile.write(data)
-
+# 使用 curl -XPOST -T mosquitto.tar  http://192.168.3.158:8000/mosquitto.tar上传文件
     def do_POST(self):
-        self.send_error(415, "Only GET is supported.")
+        #if self.path == '/mosq.tar':
+        self.send_response(200)
+        self.send_header('Content-type','text/html')
+        self.end_headers()
+        
+        print(self.headers)
+        print("---------------")
+        print(self.command)
+        print("---------------")
+        data = self.rfile.read(int(self.headers['content-length']))
+        print("content-length{}".format(int(self.headers['content-length'])))
+        print(data)
+        print("---------------")
+        #print(data.decode('utf-8'))
+        #print("---------------")
+        p=self.path[1:]
+        f = open(p,"wb");
+        f.write(data);
+        #else:
+            #self.send_error(415, "Only GET is supported.")
 
 def https_service(address):
     print("Starting server, listen at: {}".format(address))
     httpd = HTTPServer(address, TodoHandler)
     
-    httpd.socket = ssl.wrap_socket(httpd.socket,certfile=certificate_file, keyfile=private_key_file, server_side=True)
+    #httpd.socket = ssl.wrap_socket(httpd.socket,certfile=certificate_file, keyfile=private_key_file, server_side=True)
     
     httpd.serve_forever()
 
@@ -136,8 +155,8 @@ if __name__ == "__main__":
     t2 = threading.Thread(target=Simple_web_service,kwargs={"address":http_addr})
     t3 = threading.Thread(target=echo_server,kwargs={"address":echo_addr})
     t1.start()
-    t2.start()
-    t3.start()
+    #t2.start()
+    #t3.start()
     t1.join()
-    t2.join()
-    t3.join()
+    #t2.join()
+    #t3.join()
