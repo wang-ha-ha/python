@@ -71,3 +71,13 @@ elif i == 5:
     print(r.headers)
     print("----------------------------------")
     print(r.text)
+elif i == 6: 
+    data = "{\"gateWayUuid\": \"111-111-111-333\", \"gateWaySecret\": \"\", \"productKey\": \"eb9e18cdac2949efb0c75b6f063f3841\"}"
+    print(data)
+    r = requests.post("http://zns.commnet.com.cn:81/southGateway/register",data=data)
+    print("----------------------------------")
+    print(r.status_code)
+    print("----------------------------------")
+    print(r.headers)
+    print("----------------------------------")
+    print(r.text)
