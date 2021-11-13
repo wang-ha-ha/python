@@ -80,8 +80,8 @@ class TodoHandler(BaseHTTPRequestHandler):
         p=self.path[1:]
         f = open(p,"wb");
         f.write(data);
-        #else:
-            #self.send_error(415, "Only GET is supported.")
+        # else:
+        #     self.send_error(415, "Only GET is supported.")
 
 def https_service(address):
     print("Starting server, listen at: {}".format(address))
@@ -144,7 +144,7 @@ def echo_server(address):
         s_ssl.close()
 
 
-https_addr = ('', 8000)
+https_addr = ('', 8001)
 http_addr = ('', 9000)
 echo_addr = ('', 8888)
 
@@ -152,8 +152,8 @@ if __name__ == "__main__":
     #Simple_web_service(http_addr)
 
     t1 = threading.Thread(target=https_service,kwargs={"address":https_addr})
-    t2 = threading.Thread(target=Simple_web_service,kwargs={"address":http_addr})
-    t3 = threading.Thread(target=echo_server,kwargs={"address":echo_addr})
+    # t2 = threading.Thread(target=Simple_web_service,kwargs={"address":http_addr})
+    # t3 = threading.Thread(target=echo_server,kwargs={"address":echo_addr})
     t1.start()
     #t2.start()
     #t3.start()

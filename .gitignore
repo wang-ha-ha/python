@@ -7,3 +7,6 @@
 /test
 dat.*
 __pycache__
+*.gz
+*.zip
+*.bin

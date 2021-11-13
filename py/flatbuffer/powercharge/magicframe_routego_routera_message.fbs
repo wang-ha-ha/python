@@ -1,0 +1,67 @@
+namespace magicframe.route.msg;
+
+
+
+enum Result:byte { Success = 0, Failure }
+
+
+
+union Payloads { RouteInfo, PingPong, PowerCtl, Status, QueryStatus, Alerts }
+
+table RouteInfo {
+  countx:int;
+  county:int;
+  routeid:string;
+  reply:string;
+  result:Result;
+  reason:string;
+}
+
+table PowerCtl {
+  mode:int;
+  reply:string;
+  result:Result;
+  reason:string;
+}
+
+table PingPong {
+  reqtime:long;
+  reply:string;
+  version:string;
+  result:Result;
+  reason:string;
+}
+
+
+table QueryStatus {
+  reqtime:long;
+  reply:string;
+  result:Result;
+  reason:string;
+}
+
+
+// routera to routego
+//status : 0:off 1:on
+
+table Status {
+  status:int;
+  time:long;
+  position:string;
+  screenid:string;
+}
+
+
+table Alerts {
+  alerttype:int;
+  reason:string;
+}
+
+
+
+table Payload{
+  type: Payloads;
+}
+
+root_type Payload;
+

@@ -1,0 +1,44 @@
+namespace locakerbox.Msg;
+
+enum Result:byte { Success = 0, Failure }
+
+// enum Type:byte { OpenDoor=0, OpenDoorReply, DoorClosedEv, OnlineEv, PingEv, UpgradeEv}
+
+union Payloads { Door,  PingEv, OnlineEv, UpgradeEv } // Optionally add more tables.
+
+struct GPS {
+  log:float;
+  lat:float;
+}
+
+table Door {
+  doors:[ubyte];
+  session:string;
+  reply:string;
+  result: Result;
+  success: [ubyte];
+  failure: [ubyte];
+}
+
+table PingEv {
+  temp:float;
+  signal:string;
+  pos:GPS;
+}
+
+table OnlineEv {
+  softver:string;
+  hardver:string;
+  iccid:string;
+}
+
+table UpgradeEv {
+  softver:string;
+  url:string;
+}
+
+table Payload{
+  payload: Payloads;
+}
+
+root_type Payload;

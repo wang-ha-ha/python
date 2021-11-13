@@ -72,7 +72,6 @@ elif i == 5:
     print(r.headers)
     print("----------------------------------")
     print(r.text)
-
 elif i == 6:    
     headers = {"User-Agent": "test request headers","Content-Type":"application/json;charset=UTF-8"}
     data = {
@@ -92,3 +91,14 @@ elif i == 7:
     r = requests.post(url,data=data)
     #response = r.json()
     print (r.text)
+elif i == 8: 
+    data = "{\"gateWayUuid\": \"111-111-111-333\", \"gateWaySecret\": \"\", \"productKey\": \"eb9e18cdac2949efb0c75b6f063f3841\"}"
+    print(data)
+    r = requests.post("http://zns.commnet.com.cn:81/southGateway/register",data=data)
+    print("----------------------------------")
+    print(r.status_code)
+    print("----------------------------------")
+    print(r.headers)
+    print("----------------------------------")
+    print(r.text)
+
