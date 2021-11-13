@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="utf-8"/>
+  <title> white balance </title>
+  <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+  <!-- <script src="jquery-3.0.0.min.js"></script> -->
+</head>
+<style>
+  * {
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  html {
+    display: table;
+    height: 100%;
+    width: 100%;
+  }
+
+  body {
+    margin: 0 auto;
+    width: 800px;
+    height: 100%;
+    border: #222222 1px solid;
+  }
+
+  .button {
+    width: 150px;
+    height: 50px;
+    color: blue;
+    font-size: 20px;
+    background: #b3d4fc;
+    border-radius: 5px;
+    border-color: #b3d4fc;
+    cursor: pointer;
+    margin: 10px;
+  }
+
+  .input {
+    width: 200px;
+    height: 30px;
+    margin: 10px;
+  }
+</style>
+<body>
+    <h2>测试图片</h2>
+    <div style="text-align: center;margin: 10px">
+        <button class="button" type="radio" id="test_picture_button_1" onclick="test_picture_choose(1)">十六阶梯</button>
+        <button class="button" type="radio" id="test_picture_button_2" onclick="test_picture_choose(2)">5%亮度</button>
+        <button class="button" type="radio" id="test_picture_button_3" onclick="test_picture_choose(3)">95%亮度</button>
+    </div>
+    <h2>曲线</h2>
+    <div style="text-align: center;margin: 10px">
+      <button class="button" type="radio" id="luma_curve_button" onclick="curve_choose(1)">亮度曲线</button>
+      <button class="button" type="radio" id="contrast_curve_button" onclick="curve_choose(2)">对比度曲线</button>
+      <button class="button" type="radio" id="hue_curve_button" onclick="curve_choose(3)">色相曲线</button>
+      <button class="button" type="radio" id="saturation_curve_button" onclick="curve_choose(4)">饱和度曲线</button>
+      <button class="button" type="radio" id="sharpness_curve_button" onclick="curve_choose(5)">锐度曲线</button>
+    </div>
+    <div style="text-align: center">
+        <form id="curve" action="curve_choose_1" method="post" target="curve_iframe">
+            <label>
+                1(0-100):<input class="input" type="tel" name="Node1" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                2(0-100):<input class="input" type="tel" name="Node2" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                3(0-100):<input class="input" type="tel" name="Node3" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                4(0-100):<input class="input" type="tel" name="Node4" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                5(0-100):<input class="input" type="tel" name="Node5" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+                <input class="button" type="submit" value="确认">
+        </form>
+        <iframe name="curve_iframe" style="display: none;"></iframe>
+    </div>
+    <h2>图像设置</h2>
+    <div style="text-align: center;margin: 10px">
+        <button class="button" type="radio" id="picture_button_1" onclick="picture_choose(1)">柔和</button>
+        <button class="button" type="radio" id="picture_button_2" onclick="picture_choose(2)">标准</button>
+        <button class="button" type="radio" id="picture_button_3" onclick="picture_choose(3)">艳丽</button>
+    </div>
+    <div style="text-align: center">
+        <form id="picture" action="picture_choose_1" method="post" target="picture_iframe">
+            <label>
+                亮  度(0-100):<input class="input" type="tel" name="Luma" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                对比度(0-100):<input class="input" type="tel" name="Contrast" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                色  相(0-100):<input class="input" type="tel" name="Hue" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                饱和度(0-100):<input class="input" type="tel" name="Saturation" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                锐  度(0-100):<input class="input" type="tel" name="Sharpness" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+                <input class="button" type="submit" value="确认">
+        </form>
+        <iframe name="picture_iframe" style="display: none;"></iframe>
+    </div>
+    <h2>白平衡</h2>
+    <div style="text-align: center;margin: 10px">
+        <button class="button" type="radio" id="wb_button_1" onclick="wb_choose(1)">冷色</button>
+        <button class="button" type="radio" id="wb_button_2" onclick="wb_choose(2)">标准</button>
+        <button class="button" type="radio" id="wb_button_3" onclick="wb_choose(3)">暖色</button>
+    </div>
+    <div style="text-align: center">
+        <form id="whitebalance" action="wb_choose_1" method="post" target="whitebalance_iframe">
+            <label>
+                RedOffset(0-255):<input class="input" type="tel" name="RedOffset" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                GreenOffset(0-255):<input class="input" type="tel" name="GreenOffset" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                BlueOffset(0-255):<input class="input" type="tel" name="BlueOffset" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                RedColor(0-255):<input class="input" type="tel" name="RedColor" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                GreenColor(0-255):<input class="input" type="tel" name="GreenColor" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+            <label>
+                BlueColor(0-255):<input class="input" type="tel" name="BlueColor" value="" onkeyup="this.value=this.value.replace(/\D/g,'')">
+            </label><br>
+                <input class="button" type="submit" value="确认">
+        </form>
+        <iframe name="whitebalance_iframe" style="display: none;"></iframe>
+    </div>
+</body>
+
+<script language="javascript">
+  let action = ""
+  let enctype = ""
+  let method = ""
+  // let hostname = "http://127.0.0.1:8000"
+  let hostname = "http://192.168.1.1:8000"
+  curve_choose(1);
+  picture_choose(2);
+  wb_choose(2);
+  test_picture_choose(1);
+
+  function test_picture_choose(data){
+    send = {"data": data}
+    sendjson = JSON.stringify(send)
+    switch (data) {
+          case 1:
+            document.getElementById("test_picture_button_1").style.color="red" 
+            document.getElementById("test_picture_button_2").style.color="blue"
+            document.getElementById("test_picture_button_3").style.color="blue"
+            break
+          case 2:
+            document.getElementById("test_picture_button_1").style.color="blue" 
+            document.getElementById("test_picture_button_2").style.color="red"
+            document.getElementById("test_picture_button_3").style.color="blue"
+            break
+          case 3:
+            document.getElementById("test_picture_button_1").style.color="blue" 
+            document.getElementById("test_picture_button_2").style.color="blue"
+            document.getElementById("test_picture_button_3").style.color="red"
+            break
+      }
+    $.ajax({
+      url: hostname + "/test_picture_set",
+      dataType: "json",
+      type: "post",
+      data: sendjson,
+      success: function (result) {
+        
+      },
+      error: function (data) {
+        // alert("Request error");
+      }
+    });
+  }
+
+  function curve_choose(value){
+    send = {"data": value}
+    sendjson = JSON.stringify(send)
+    $.ajax({
+      url: hostname + "/curve_get_data",
+      dataType: "json",
+      type: "post",
+      data: sendjson,
+      success: function (result) {
+        document.getElementsByClassName("input").namedItem("Node1").value = result.Node1
+        document.getElementsByClassName("input").namedItem("Node2").value = result.Node2
+        document.getElementsByClassName("input").namedItem("Node3").value = result.Node3
+        document.getElementsByClassName("input").namedItem("Node4").value = result.Node4
+        document.getElementsByClassName("input").namedItem("Node5").value = result.Node5
+      },
+      error: function (data) {
+        alert("Request error");
+      }
+    });
+
+    switch (value) {
+      case 1:
+        action = "curve_choose_1"
+        enctype = ""
+        method = "post"
+        document.getElementById("luma_curve_button").style.color="red" 
+        document.getElementById("contrast_curve_button").style.color="blue"
+        document.getElementById("hue_curve_button").style.color="blue"
+        document.getElementById("saturation_curve_button").style.color="blue"
+        document.getElementById("sharpness_curve_button").style.color="blue"
+        break
+      case 2:
+        action = "curve_choose_2"
+        enctype = ""
+        method = "post"
+        document.getElementById("luma_curve_button").style.color="blue" 
+        document.getElementById("contrast_curve_button").style.color="red"
+        document.getElementById("hue_curve_button").style.color="blue"
+        document.getElementById("saturation_curve_button").style.color="blue"
+        document.getElementById("sharpness_curve_button").style.color="blue"
+        break
+      case 3:
+        action = "curve_choose_3"
+        enctype = ""
+        method = "post"
+        document.getElementById("luma_curve_button").style.color="blue" 
+        document.getElementById("contrast_curve_button").style.color="blue"
+        document.getElementById("hue_curve_button").style.color="red"
+        document.getElementById("saturation_curve_button").style.color="blue"
+        document.getElementById("sharpness_curve_button").style.color="blue"
+        break
+      case 4:
+        action = "curve_choose_4"
+        enctype = ""
+        method = "post"
+        document.getElementById("luma_curve_button").style.color="blue" 
+        document.getElementById("contrast_curve_button").style.color="blue"
+        document.getElementById("hue_curve_button").style.color="blue"
+        document.getElementById("saturation_curve_button").style.color="red"
+        document.getElementById("sharpness_curve_button").style.color="blue"
+        break
+      case 5:
+        action = "curve_choose_5"
+        enctype = ""
+        method = "post"
+        document.getElementById("luma_curve_button").style.color="blue" 
+        document.getElementById("contrast_curve_button").style.color="blue"
+        document.getElementById("hue_curve_button").style.color="blue"
+        document.getElementById("saturation_curve_button").style.color="blue"
+        document.getElementById("sharpness_curve_button").style.color="red"
+        break
+    }
+
+    document.getElementById("curve").setAttribute("action", action)
+    document.getElementById("curve").setAttribute("enctype", enctype)
+    document.getElementById("curve").setAttribute("method", method)
+  }
+  function picture_choose(value) {
+    picture_choose_getData(value)
+    switch (value) {
+      case 1:
+        action = "picture_choose_1"
+        enctype = ""
+        method = "post"
+        document.getElementById("picture_button_1").style.color="red" 
+        document.getElementById("picture_button_2").style.color="blue"
+        document.getElementById("picture_button_3").style.color="blue"
+        break
+      case 2:
+        action = "picture_choose_2"
+        enctype = ""
+        method = "post"
+        document.getElementById("picture_button_1").style.color="blue" 
+        document.getElementById("picture_button_2").style.color="red"
+        document.getElementById("picture_button_3").style.color="blue"
+        break
+      case 3:
+        action = "picture_choose_3"
+        enctype = ""
+        method = "post"
+        document.getElementById("picture_button_1").style.color="blue" 
+        document.getElementById("picture_button_2").style.color="blue"
+        document.getElementById("picture_button_3").style.color="red"
+        break
+    }
+    picture_setFrom(action, enctype, method)
+  }
+
+  function picture_setFrom(action, enctype, method) {
+    document.getElementById("picture").setAttribute("action", action)
+    document.getElementById("picture").setAttribute("enctype", enctype)
+    document.getElementById("picture").setAttribute("method", method)
+  }
+
+  function picture_choose_getData(data) {
+    send = {"data": data}
+    sendjson = JSON.stringify(send)
+    $.ajax({
+      url: hostname + "/picture_get_data",
+      dataType: "json",
+      type: "post",
+      data: sendjson,
+      success: function (result) {
+        document.getElementsByClassName("input").namedItem("Luma").value = result.Luma
+        document.getElementsByClassName("input").namedItem("Contrast").value = result.Contrast
+        document.getElementsByClassName("input").namedItem("Hue").value = result.Hue
+        document.getElementsByClassName("input").namedItem("Saturation").value = result.Saturation
+        document.getElementsByClassName("input").namedItem("Sharpness").value = result.Sharpness
+      },
+      error: function (data) {
+        alert("Request error");
+      }
+    });
+  }
+
+  function wb_choose(value) {
+    wb_choose_getData(value)
+    switch (value) {
+      case 1:
+        action = "wb_choose_1"
+        enctype = ""
+        method = "post"
+        document.getElementById("wb_button_1").style.color="red" 
+        document.getElementById("wb_button_2").style.color="blue"
+        document.getElementById("wb_button_3").style.color="blue"
+        break
+      case 2:
+        action = "wb_choose_2"
+        enctype = ""
+        method = "post"
+        document.getElementById("wb_button_1").style.color="blue" 
+        document.getElementById("wb_button_2").style.color="red"
+        document.getElementById("wb_button_3").style.color="blue"
+        break
+      case 3:
+        action = "wb_choose_3"
+        enctype = ""
+        method = "post"
+        document.getElementById("wb_button_1").style.color="blue" 
+        document.getElementById("wb_button_2").style.color="blue"
+        document.getElementById("wb_button_3").style.color="red"
+        break
+    }
+    wb_setFrom(action, enctype, method)
+  }
+
+  function wb_setFrom(action, enctype, method) {
+    document.getElementById("whitebalance").setAttribute("action", action)
+    document.getElementById("whitebalance").setAttribute("enctype", enctype)
+    document.getElementById("whitebalance").setAttribute("method", method)
+  }
+
+  function wb_choose_getData(data) {
+    send = {"data": data}
+    sendjson = JSON.stringify(send)
+    $.ajax({
+      url: hostname + "/wb_get_data",
+      dataType: "json",
+      type: "post",
+      data: sendjson,
+      success: function (result) {
+        document.getElementsByClassName("input").namedItem("RedOffset").value = result.RedOffset
+        document.getElementsByClassName("input").namedItem("GreenOffset").value = result.GreenOffset
+        document.getElementsByClassName("input").namedItem("BlueOffset").value = result.BlueOffset
+        document.getElementsByClassName("input").namedItem("RedColor").value = result.RedColor
+        document.getElementsByClassName("input").namedItem("GreenColor").value = result.GreenColor
+        document.getElementsByClassName("input").namedItem("BlueColor").value = result.BlueColor
+      },
+      error: function (data) {
+        alert("Request error");
+      }
+    });
+  }
+
+</script>
+</html>
