@@ -74,7 +74,7 @@ def udp_echo():
     # 创建监听socket
     udpServerSocket = socket(AF_INET, SOCK_DGRAM)
     
-    bindAdress =('',7777)
+    bindAdress =('',5005)
     # 绑定IP地址和固定端口
     udpServerSocket.bind(bindAdress)
 
@@ -95,8 +95,8 @@ def udp_echo():
                         data += b"**"
                         send_count += len(data)
                         # 返回响应数据，将客户端发送来的数据原样返回
-                        udpServerSocket.sendto(data,client_address)
-                        print('发送消息 {} 至 {}'.format(data.decode('utf-8'), client_address))
+                        #udpServerSocket.sendto(data,client_address)
+                        #print('发送消息 {} 至 {}'.format(data.decode('utf-8'), client_address))
                     else:
                         print('客户端 {} 已断开！'.format(client_address))
                         break
@@ -144,4 +144,4 @@ def recv_file():
     tcpServerSocket.close()
 
 if __name__ == "__main__":
-    tcp_echo()
+    udp_echo()

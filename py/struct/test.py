@@ -3,7 +3,7 @@ import asyncio
 import time
 import numpy as np
 
-print(np.eye(4))
+# print(np.eye(4))
 
 # import struct
 
@@ -16,7 +16,8 @@ print(np.eye(4))
 # localtime = time.localtime(int(ts))
 # print("本地时间为 :{}",format(localtime))
 
-# bin_buf_s = struct.pack("f",ts)
+# bin_buf_s = struct.pack("f", ts)
+# print(type(bin_buf_s))
 # for i in bin_buf_s:
 #     print("{0:x}".format(i),end = " ")
 # print()
@@ -33,9 +34,23 @@ print(np.eye(4))
 #     print("{0:x}".format(i),end = " ")
 # print()
 
-# ts, = struct.unpack("!i",bin_buf_s)
+# ts, = struct.unpack(">i",bin_buf_s)
 # print(ts)
 # print(type(ts))
 
 # localtime = time.localtime(ts)
-# print("本地时间为 :{}",format(localtime))
+# print("本地时间为 :{}", format(localtime))
+
+# bin_buf_s = struct.pack("<i", ts)
+# for i in bin_buf_s:
+#     print("{0:x}".format(i),end = " ")
+# print()
+
+reqtime = int(time.time())
+print("reqtime:{} type{}".format(reqtime,type(reqtime)))
+localtime = time.asctime( time.localtime(reqtime) )
+print(localtime)
+reqtime = time.time()
+print("reqtime:{} type{}".format(reqtime,type(reqtime)))
+localtime = time.asctime( time.localtime(reqtime) )
+print(localtime)

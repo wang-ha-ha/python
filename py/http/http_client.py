@@ -1,5 +1,6 @@
 import requests
 import sys
+import json
 
 #HOST = "https://192.168.199.145:8000/"
 #HOST = "https://localhost:8000/"
@@ -71,3 +72,23 @@ elif i == 5:
     print(r.headers)
     print("----------------------------------")
     print(r.text)
+
+elif i == 6:    
+    headers = {"User-Agent": "test request headers","Content-Type":"application/json;charset=UTF-8"}
+    data = {
+        "gateWayUuid": "111-111-111-222",
+        "gateWaySecret": "",
+        "productKey": "eb9e18cdac2949efb0c75b6f063f3841",
+    }
+    print(str(data))
+    r = requests.post("http://zns.commnet.com.cn:81/southGateway/register",headers = headers,json = data)
+    print(r.text)
+elif i == 7:  
+    host = "http://httpbin.org/"
+    endpoint = "post"
+    url = ''.join([host,endpoint])
+    data = {'key1':'value1','key2':'value2'}
+    
+    r = requests.post(url,data=data)
+    #response = r.json()
+    print (r.text)

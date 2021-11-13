@@ -36,7 +36,7 @@ def main(addr,flag):
     print("链接已断开！")
     tcpClientSocket.close()
 
-udp_addr =('127.0.0.1',7777)
+udp_addr =('120.48.26.72',5005)
 
 def udp_test(addr):
 
@@ -54,10 +54,10 @@ def udp_test(addr):
         # 发送数据
         s.sendto(data.encode('utf-8'),addr)
         # 接收数据
-        data ,recvAddr = s.recvfrom(BUFSIZE)
-        if not data:
-            break
-        print("服务器端响应：", data.decode('utf-8'))
+        #data ,recvAddr = s.recvfrom(BUFSIZE)
+        #if not data:
+            #break
+        #print("服务器端响应：", data.decode('utf-8'))
 
     print("链接已断开！")
     tcpClientSocket.close()

@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 
-cafile = "./ca.crt"
+cafile = "./cacert.pem"
 certfile = "./client.crt"
 keyfile = "./client.key"
 
@@ -21,13 +21,13 @@ def on_log(client, userdata, level, buf):
     pass
     
 client = mqtt.Client(client_id = "MQTT test client")
-client.tls_set(cafile,certfile,keyfile)
+client.tls_set(cafile)
 client.tls_insecure_set(True)
 client.on_connect = on_connect
 client.on_message = on_message
 client.on_publish = on_publish
 client.on_log = on_log
-client.connect('192.168.199.145', 8883, 60) # 600为keepalive的时间间隔
+client.connect('120.48.26.72', 8883, 60) # 600为keepalive的时间间隔
 client.loop_start()
 
 while(True):
