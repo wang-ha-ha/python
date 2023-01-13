@@ -1,10 +1,69 @@
+#-*- coding:utf-8 -*-
 from socket import *
+from select import select
+import sys
 import time
 
 HOST = ''
-PORT = 6666
+PORT = 5001
 BUFSIZE = 1024
 ADDRESS = (HOST, PORT)
+
+def tcp_cmd():
+    serSocket = socket(AF_INET, SOCK_STREAM)
+    serSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+
+    serSocket.bind(ADDRESS)
+    serSocket.setblocking(False)
+    serSocket.listen(100)
+    inputs = [serSocket]
+    clients = {}
+    running = True
+
+    print("Listen 5001")
+
+    inputs.append(sys.stdin)
+
+    while True:
+
+        readable, writable, exceptionable = select(inputs, [], [])
+
+        for sock in readable:
+
+            if sock == serSocket:
+                clientSocket, clientAddr = serSocket.accept()
+                print('newClient[%s]'%str(clientAddr))
+                inputs.append(clientSocket)
+                clients[clientSocket] = clientAddr
+
+            elif sock == sys.stdin:
+                cmd = sys.stdin.readline().rstrip()
+                print("Recv console msg:%s"%(cmd))
+                if cmd == 'exit':
+                    running = False
+                else:
+                    for c in inputs:
+                        if c == serSocket or c == sys.stdin:
+                            continue
+                        c.send(cmd.encode('utf-8'))
+            else:
+                try:
+                    massage = sock.recv(1024)
+                    if massage:
+                        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                        print('massage from [%s] is %s'%(clients[clientSocket], massage.decode('utf-8')))
+                    else:
+                        print('[%s] was closed'%(str(sock)))
+                        inputs.remove(sock)
+                        clients.remove(clientSocket)
+                        sock.close()
+                except Exception as e:
+                    print(e)
+
+        if not running:
+            break
+
+    serSocket.close()
 
 def tcp_echo():
     recv_count = 0
@@ -131,7 +190,7 @@ def recv_file():
             # 如果客户端关闭了连接，data是空字符串
             data = client_socket.recv(2048)
             if data:
-                print('接收到消息 {}({} bytes) 来自 {}'.format(data.decode('utf-8'), len(data), client_address))
+                print('%s:接收到消息 {}({} bytes) 来自 {}'.format(data.decode('utf-8'), len(data), client_address))
                 f.write(data);
             else:
                 print('客户端 {} 已断开！'.format(client_address))
@@ -144,4 +203,4 @@ def recv_file():
     tcpServerSocket.close()
 
 if __name__ == "__main__":
-    udp_echo()
+    tcp_cmd()
